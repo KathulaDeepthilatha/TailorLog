@@ -1,0 +1,27 @@
+{
+  "devDependencies": {
+    "parcel": "^2.14.2"
+  },
+  "dependencies": {
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "name": "tailorlog",
+  "version": "1.0.0",
+  "description": "This is Tailor Measurement App",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/KathulaDeepthilatha/TailorLog.git"
+  },
+  "keywords": [],
+  "author": "Deepthi",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/KathulaDeepthilatha/TailorLog/issues"
+  },
+  "homepage": "https://github.com/KathulaDeepthilatha/TailorLog#readme"
+}
