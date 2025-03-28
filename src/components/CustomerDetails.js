@@ -18,18 +18,15 @@ function CustomerDetails() {
     }
   }, [id]);
 
-  const handleDeleteCategory = (categoryId) => {
-    if (customer) {
-      const updatedCategories = customer.categories.filter(cat => cat.id !== categoryId);
-      const updatedCustomer = { ...customer, categories: updatedCategories };
-
-      setCustomer(updatedCustomer);
-      const allCustomers = JSON.parse(localStorage.getItem('customers')) || [];
-      const updatedCustomers = allCustomers.map(cust => (cust.id === id ? updatedCustomer : cust));
-
-      localStorage.setItem('customers', JSON.stringify(updatedCustomers));
+  const handleDelete = async () => {
+    try {
+      await axios.delete(`http://localhost:5000/api/customers/${customer._id}`);
+      navigate('/customers'); // Redirect after delete
+    } catch (error) {
+      console.error('Error deleting customer:', error);
     }
   };
+  
 
   const markAsCompleted = (categoryId) => {
     if (customer) {
@@ -68,7 +65,7 @@ function CustomerDetails() {
                 <h3>{category.name}</h3>
                 <p>Price: ₹{category.price}</p>
                 <p>Due Date: {category.dueDate}</p>
-                <button className="delete-btn" onClick={() => handleDeleteCategory(category.id)}>🗑 Delete</button>
+                <button className="delete-btn" onClick={() => handleDelete(category.id)}>🗑 Delete</button>
                 <label>
                   <input type="checkbox" checked={category.completed} onChange={() => markAsCompleted(category.id)} />
                   Completed

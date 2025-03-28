@@ -38,20 +38,45 @@ function Measurements() {
     setMeasurements({ ...measurements, [e.target.name]: e.target.value });
   };
 
-  const handleSave = () => {
-    // Save the measurements in local storage or API
-    const storedData = JSON.parse(localStorage.getItem('measurements')) || {};
+  // const handleSave = () => {
+  //   // Save the measurements in local storage or API
+  //   const storedData = JSON.parse(localStorage.getItem('measurements')) || {};
     
-    if (!storedData[customerName]) {
-      storedData[customerName] = {};
-    }
+  //   if (!storedData[customerName]) {
+  //     storedData[customerName] = {};
+  //   }
 
-    storedData[customerName][category] = measurements;
-    localStorage.setItem('measurements', JSON.stringify(storedData));
+  //   storedData[customerName][category] = measurements;
+  //   localStorage.setItem('measurements', JSON.stringify(storedData));
 
+  //   alert('Measurements saved successfully!');
+  //   setTimeout(() => navigate('/customers'), 1000); // Redirect after saving
+  // };
+
+  const handleSave = () => {
+    // Get existing customers from local storage
+    const storedCustomers = JSON.parse(localStorage.getItem('customers')) || [];
+  
+    // Find the specific customer
+    const updatedCustomers = storedCustomers.map((customer) => {
+      if (customer.name === customerName) {
+        // Find the selected category and update its measurements
+        return {
+          ...customer,
+          categories: customer.categories.map((cat) =>
+            cat.name === category ? { ...cat, measurements } : cat
+          ),
+        };
+      }
+      return customer;
+    });
+  
+    // Save updated customers back to local storage
+    localStorage.setItem('customers', JSON.stringify(updatedCustomers));
+  
     alert('Measurements saved successfully!');
     setTimeout(() => navigate('/customers'), 1000); // Redirect after saving
-  };
+  };  
 
   return (
     <div className="measurements-container">

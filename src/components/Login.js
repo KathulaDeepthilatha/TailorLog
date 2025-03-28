@@ -1,49 +1,83 @@
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import '../styles/Login.css';
+const LoginPage = () => {
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [pin, setPin] = useState("");
+  const [error, setError] = useState("");
+  const navigate = useNavigate(); // React Router navigation function
 
-function Login() {
-  const [phone, setPhone] = useState('');
-  const [pin, setPin] = useState('');
-  const [error, setError] = useState(null);
-  const navigate = useNavigate();
+  const API_URL = "http://localhost:5000/api/auth/login"; // Replace with your actual backend URL
 
   const handleLogin = async () => {
+    setError(""); // Clear previous errors
+
+    if (!phoneNumber || !pin) {
+      setError("Please enter both phone number and PIN.");
+      return;
+    }
+
     try {
-      const response = await fetch("http://localhost:5000/api/auth/login", {
+      const response = await fetch(API_URL, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          phone: phoneInput,  // User enters phone
-          pin: pinInput,      // User enters Pin
-        }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ phoneNumber, pin }),
       });
-  
+
       const data = await response.json();
+
       if (response.ok) {
-        alert("Login successful!");
+        alert("Login Successful");
+        localStorage.setItem("authToken", data.token); // Store token
+        navigate("/home"); // Navigate to home page
       } else {
-        alert(data.message);
+        setError(data.message || "Invalid phone number or PIN.");
       }
     } catch (error) {
-      alert("Login failed.");
-      console.error("Error:", error);
+      console.error("Login error:", error);
+      setError("Something went wrong. Please try again.");
     }
   };
-  
 
   return (
-    <div className="login-container">
-      <h2>Login</h2>
-      <input type="text" placeholder="Phone Number" value={phone} onChange={(e) => setPhone(e.target.value)} />
-      <input type="password" placeholder="PIN" value={pin} onChange={(e) => setPin(e.target.value)} />
-      {error && <p className="error-text">{error}</p>}
-      <button onClick={handleLogin}>Login</button>
-      <button onClick={() => alert('Reset PIN feature coming soon!')}>Forgot PIN?</button>
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-4">
+      <div className="mb-6">
+        <img src="/logo.png" alt="Tailor Shop Logo" className="w-20 h-20" />
+        <h1 className="text-2xl font-bold mt-2">Tailor Shop</h1>
+      </div>
+
+      <div className="bg-white p-6 rounded-lg shadow-lg w-80">
+        <h2 className="text-xl font-semibold mb-4 text-center">Login</h2>
+        
+        {error && <p className="text-red-500 text-sm mb-3">{error}</p>}
+
+        <input
+          type="tel"
+          placeholder="Phone Number"
+          value={phoneNumber}
+          onChange={(e) => setPhoneNumber(e.target.value)}
+          className="w-full p-3 border rounded-lg mb-3"
+        />
+
+        <input
+          type="password"
+          placeholder="PIN"
+          value={pin}
+          onChange={(e) => setPin(e.target.value)}
+          className="w-full p-3 border rounded-lg mb-4"
+        />
+
+        <button
+          onClick={handleLogin}
+          className="w-full bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-700"
+        >
+          Login
+        </button>
+      </div>
     </div>
   );
-}
+};
 
-export default Login;
+export default LoginPage;

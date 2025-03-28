@@ -17,9 +17,9 @@ function Customers() {
 
   const filteredCustomers = customers.filter(
     (customer) =>
-      customer.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      customer.phone.includes(searchQuery)
-  );
+      customer.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      customer.phone?.includes(searchQuery)
+  );  
 
   return (
     <div className="customers-container">
@@ -37,25 +37,42 @@ function Customers() {
       </div>
 
       <div className="customer-list">
-        {filteredCustomers.length > 0 ? (
-          filteredCustomers.map((customer) => (
-            <div
-              key={customer.id}
-              className="customer-card"
-              onClick={() => navigate(`/customer-details/${customer.id}`)}
-            >
-              <img src={customer.categories[0]?.image || '/images/default-cloth.png'} alt="Clothing" />
-              <div className="customer-info">
-                <h3>{customer.name}</h3>
-                <p>📞 {customer.phone}</p>
-                <p>Due Date: {customer.dueDate}</p>
-              </div>
+  {filteredCustomers.length > 0 ? (
+    filteredCustomers.map((customer) => (
+      <div
+        key={customer.id}
+        className="customer-card"
+        onClick={() => navigate(`/customer-details/${customer.id}`)}
+      >
+        <img src={customer.categories[0]?.image || '/images/default-cloth.png'} alt="Clothing" />
+        <div className="customer-info">
+          <h3>{customer.name}</h3>
+          <p>📞 {customer.phone}</p>
+          <p>Due Date: {customer.dueDate}</p>
+          
+          {/* Display measurements */}
+          {customer.categories.map((cat) => (
+            <div key={cat.name} className="category-details">
+              <strong>{cat.name}:</strong>
+              {cat.measurements ? (
+                <ul>
+                  {Object.entries(cat.measurements).map(([key, value]) => (
+                    <li key={key}>{`${key}: ${value}`}</li>
+                  ))}
+                </ul>
+              ) : (
+                <p>No measurements added.</p>
+              )}
             </div>
-          ))
-        ) : (
-          <p className="no-results">No customers found.</p>
-        )}
+          ))}
+        </div>
       </div>
+    ))
+  ) : (
+    <p className="no-results">No customers found.</p>
+  )}
+</div>
+
     </div>
   );
 }

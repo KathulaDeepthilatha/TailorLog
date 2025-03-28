@@ -1,7 +1,6 @@
-
-// Frontend: src/components/AddCustomer.js
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import axios from 'axios'; // Import axios
 import '../styles/AddCustomer.css';
 
 function AddCustomer() {
@@ -20,14 +19,21 @@ function AddCustomer() {
     setCustomer({ ...customer, [e.target.name]: e.target.value });
   };
 
-  const handleSaveAndNext = () => {
+  const handleSaveAndNext = async () => {
     if (customer.name && customer.phone && customer.dueDate) {
-      localStorage.setItem('customerData', JSON.stringify(customer));
-      navigate('/category');
+      try {
+        const response = await axios.post('http://localhost:5000/api/customers/add', customer);
+        console.log("Customer added:", response.data);
+  
+        navigate('/category'); // ✅ Navigate after saving
+      } catch (error) {
+        console.error('Error adding customer:', error);
+        alert('Failed to add customer. Please try again.');
+      }
     } else {
       alert('Please fill all the fields');
     }
-  };
+  };  
 
   return (
     <div className="add-customer-container">
@@ -43,7 +49,9 @@ function AddCustomer() {
         <input type="date" name="dueDate" value={customer.dueDate} onChange={handleChange} required />
 
         <div className="form-buttons">
-          <button type="button" className="save-next-button" onClick={handleSaveAndNext}>Save & Next</button>
+          <button type="button" className="save-next-button" onClick={handleSaveAndNext}>
+            Save & Next
+          </button>
         </div>
       </form>
     </div>
